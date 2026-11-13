@@ -5,3 +5,4 @@ const aiController = require('../controllers/aiController');
 router.get('/', aiController.getAvailableModels);
 
 module.exports = router;
+

@@ -26,3 +26,4 @@ export const fileService = {
     return res.data;
   }
 };
+

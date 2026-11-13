@@ -58,4 +58,12 @@ describe('UMNY AI Authentication & System Health API', () => {
     expect(successRes.statusCode).toEqual(200);
     expect(successRes.body).toHaveProperty('token');
   });
+
+  it('ALL /api/unmatched-endpoint should return structured 404 JSON error', async () => {
+    const res = await request(app).get('/api/unmatched-endpoint');
+    expect(res.statusCode).toEqual(404);
+    expect(res.body).toHaveProperty('message');
+    expect(res.body.message).toContain('API endpoint not found');
+  });
 });
+

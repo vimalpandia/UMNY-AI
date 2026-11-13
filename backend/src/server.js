@@ -9,12 +9,13 @@ async function startServer() {
   // Connect to MongoDB Atlas
   await connectDB();
 
-  server.listen(env.PORT, () => {
+  server.listen(env.PORT, '0.0.0.0', () => {
     console.log(`==================================================`);
     console.log(`  UMNY AI Platform Server Started`);
+    console.log(`  Host: 0.0.0.0`);
     console.log(`  Port: ${env.PORT}`);
     console.log(`  Environment: ${env.NODE_ENV}`);
-    console.log(`  API Health: http://localhost:${env.PORT}/api/health`);
+    console.log(`  API Health: http://0.0.0.0:${env.PORT}/api/health`);
     console.log(`==================================================`);
   });
 }
@@ -40,3 +41,4 @@ if (require.main === module) {
 }
 
 module.exports = { app, server, startServer };
+

@@ -212,3 +212,4 @@ export default function VoiceModal({ isOpen, onClose }) {
     </Modal>
   );
 }
+

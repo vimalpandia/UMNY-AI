@@ -40,3 +40,4 @@ class AIProvider {
 }
 
 module.exports = AIProvider;
+

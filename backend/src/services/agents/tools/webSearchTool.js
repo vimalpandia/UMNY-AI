@@ -48,3 +48,4 @@ const webSearchTool = {
 };
 
 module.exports = webSearchTool;
+

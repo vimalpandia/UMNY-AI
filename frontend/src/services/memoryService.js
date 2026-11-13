@@ -26,3 +26,4 @@ export const memoryService = {
     return res.data;
   }
 };
+

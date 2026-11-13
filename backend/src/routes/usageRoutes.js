@@ -8,3 +8,4 @@ router.use(authMiddleware);
 router.get('/my-stats', usageController.getMyStats);
 
 module.exports = router;
+

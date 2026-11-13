@@ -5,8 +5,18 @@ const env = require('../../config/env');
 class AnthropicProvider extends AIProvider {
   constructor() {
     super('anthropic');
-    this.apiKey = env.ANTHROPIC_API_KEY;
-    this.client = this.apiKey ? new Anthropic({ apiKey: this.apiKey }) : null;
+    this.apiKey = null;
+    this.client = null;
+  }
+
+  getClient() {
+    const currentKey = process.env.ANTHROPIC_API_KEY || env.ANTHROPIC_API_KEY;
+    if (!currentKey) return null;
+    if (!this.client || this.apiKey !== currentKey) {
+      this.apiKey = currentKey;
+      this.client = new Anthropic({ apiKey: this.apiKey });
+    }
+    return this.client;
   }
 
   supportsModel(model) {
@@ -23,7 +33,8 @@ class AnthropicProvider extends AIProvider {
   }
 
   async streamChat({ model, messages, systemInstruction, temperature = 0.7, onChunk }) {
-    if (!this.client) {
+    const client = this.getClient();
+    if (!client) {
       const guidance =
         `[UMNY AI Notice]: Anthropic API key is not currently set in ANTHROPIC_API_KEY.\n\n` +
         `To activate live Claude generation, configure your ANTHROPIC_API_KEY in your .env or Render dashboard.`;
@@ -48,7 +59,7 @@ class AnthropicProvider extends AIProvider {
         }
       }
 
-      const stream = await this.client.messages.stream({
+      const stream = await client.messages.stream({
         model: modelName,
         max_tokens: 4096,
         temperature: Math.min(Math.max(temperature, 0), 1),
@@ -81,3 +92,4 @@ class AnthropicProvider extends AIProvider {
 }
 
 module.exports = AnthropicProvider;
+

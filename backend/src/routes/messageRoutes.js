@@ -8,3 +8,4 @@ router.use(authMiddleware);
 router.get('/:conversationId', messageController.getMessagesByConversation);
 
 module.exports = router;
+

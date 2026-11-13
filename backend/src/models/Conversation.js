@@ -30,3 +30,4 @@ const conversationSchema = new mongoose.Schema(
 conversationSchema.index({ userId: 1, updatedAt: -1 });
 
 module.exports = mongoose.model('Conversation', conversationSchema);
+

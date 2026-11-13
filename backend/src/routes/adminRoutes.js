@@ -15,3 +15,4 @@ router.get('/logs', adminController.getLogs);
 router.get('/health', adminController.getHealth);
 
 module.exports = router;
+

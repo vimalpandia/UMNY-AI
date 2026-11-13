@@ -154,3 +154,4 @@ export default function AttachmentPicker({ isOpen, onClose }) {
     </Modal>
   );
 }
+

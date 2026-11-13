@@ -10,3 +10,4 @@ router.get('/config', agentController.getConfiguration);
 router.put('/config', agentController.updateConfiguration);
 
 module.exports = router;
+

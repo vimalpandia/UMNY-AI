@@ -9,3 +9,4 @@ router.put('/profile', userController.updateProfile);
 router.put('/preferences', userController.updatePreferences);
 
 module.exports = router;
+

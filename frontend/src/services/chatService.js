@@ -1,4 +1,4 @@
-import api from './api';
+import api, { getApiBaseUrl } from './api';
 
 export const chatService = {
   async getConversations(search = '') {
@@ -48,7 +48,7 @@ export const chatService = {
    */
   async streamMessage({ conversationId, content, model, attachments = [], agentMode = false }, { onChunk, onToolCall, onDone, onError, signal }) {
     const token = localStorage.getItem('umny_token');
-    const baseUrl = import.meta.env.VITE_API_URL || '/api';
+    const baseUrl = getApiBaseUrl();
 
     try {
       const response = await fetch(`${baseUrl}/ai/chat/stream`, {
@@ -116,3 +116,4 @@ export const chatService = {
     }
   }
 };
+

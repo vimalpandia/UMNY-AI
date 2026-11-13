@@ -6,3 +6,4 @@ const authMiddleware = require('../middleware/authMiddleware');
 router.get('/status', authMiddleware, voiceController.getVoiceStatus);
 
 module.exports = router;
+

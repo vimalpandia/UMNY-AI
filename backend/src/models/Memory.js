@@ -34,3 +34,4 @@ const memorySchema = new mongoose.Schema(
 memorySchema.index({ userId: 1, importance: -1, createdAt: -1 });
 
 module.exports = mongoose.model('Memory', memorySchema);
+

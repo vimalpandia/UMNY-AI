@@ -42,3 +42,4 @@ const usageLogSchema = new mongoose.Schema(
 usageLogSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model('UsageLog', usageLogSchema);
+

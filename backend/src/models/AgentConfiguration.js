@@ -36,3 +36,4 @@ const agentConfigurationSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model('AgentConfiguration', agentConfigurationSchema);
+

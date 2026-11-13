@@ -84,7 +84,13 @@ app.get('*', (req, res, next) => {
   });
 });
 
+// Handle 404 for unmatched API routes
+app.all('/api/*', (req, res) => {
+  res.status(404).json({ message: `API endpoint not found: ${req.method} ${req.originalUrl}` });
+});
+
 // Global Error Handler
 app.use(errorHandler);
 
 module.exports = app;
+

@@ -53,3 +53,4 @@ export default function Header({ onToggleSidebar, onOpenSettings, onOpenAgentToo
     </header>
   );
 }
+

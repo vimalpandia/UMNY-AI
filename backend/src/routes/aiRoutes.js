@@ -7,3 +7,4 @@ const { aiLimiter } = require('../middleware/rateLimiter');
 router.post('/chat/stream', authMiddleware, aiLimiter, aiController.streamChat);
 
 module.exports = router;
+

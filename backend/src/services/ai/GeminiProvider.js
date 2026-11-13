@@ -5,8 +5,19 @@ const env = require('../../config/env');
 class GeminiProvider extends AIProvider {
   constructor() {
     super('google');
-    this.apiKey = env.GEMINI_API_KEY;
-    this.client = this.apiKey ? new GoogleGenerativeAI(this.apiKey) : null;
+    this.apiKey = null;
+    this.client = null;
+  }
+
+  getClient() {
+    const currentKey =
+      process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || env.GEMINI_API_KEY;
+    if (!currentKey) return null;
+    if (!this.client || this.apiKey !== currentKey) {
+      this.apiKey = currentKey;
+      this.client = new GoogleGenerativeAI(this.apiKey);
+    }
+    return this.client;
   }
 
   supportsModel(model) {
@@ -27,7 +38,8 @@ class GeminiProvider extends AIProvider {
   }
 
   async streamChat({ model, messages, systemInstruction, temperature = 0.7, onChunk }) {
-    if (!this.client) {
+    const client = this.getClient();
+    if (!client) {
       const guidance =
         `[UMNY AI Notice]: Google Gemini API key is not currently set in GEMINI_API_KEY.\n\n` +
         `To activate live Gemini generation, configure your Google Gemini API key in your .env or Render dashboard.\n\n` +
@@ -41,7 +53,7 @@ class GeminiProvider extends AIProvider {
 
     try {
       const modelName = this.resolveModelName(model);
-      const generativeModel = this.client.getGenerativeModel({
+      const generativeModel = client.getGenerativeModel({
         model: modelName,
         systemInstruction: systemInstruction ? { parts: [{ text: systemInstruction }] } : undefined,
         generationConfig: {
@@ -87,3 +99,4 @@ class GeminiProvider extends AIProvider {
 }
 
 module.exports = GeminiProvider;
+

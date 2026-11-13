@@ -4,6 +4,21 @@ const bcrypt = require('bcryptjs');
 
 let isConnected = false;
 
+// Observability listeners for MongoDB Atlas lifecycle
+mongoose.connection.on('error', (err) => {
+  console.error('[MongoDB Error]:', err.message);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.warn('[MongoDB Warning]: Disconnected from database cluster');
+  isConnected = false;
+});
+
+mongoose.connection.on('reconnected', () => {
+  console.log('[MongoDB]: Successfully reconnected to database cluster');
+  isConnected = true;
+});
+
 async function connectDB() {
   if (isConnected) return mongoose.connection;
 
@@ -58,3 +73,4 @@ module.exports = {
   connectDB,
   isConnected: () => isConnected || mongoose.connection.readyState === 1,
 };
+

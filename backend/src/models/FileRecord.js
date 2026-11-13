@@ -46,3 +46,4 @@ const fileRecordSchema = new mongoose.Schema(
 fileRecordSchema.index({ userId: 1, createdAt: -1 });
 
 module.exports = mongoose.model('FileRecord', fileRecordSchema);
+
