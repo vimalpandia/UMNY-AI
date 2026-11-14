@@ -11,7 +11,20 @@ export const ChatProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
   const [loadingConversations, setLoadingConversations] = useState(false);
   const [loadingMessages, setLoadingMessages] = useState(false);
-  const [selectedModel, setSelectedModel] = useState('gemini-2.5-flash');
+  const [selectedModel, setSelectedModelState] = useState(() => {
+    const saved = localStorage.getItem('umny_selected_model');
+    if (saved && saved !== 'gemini-2.5-flash' && saved !== 'gemini-2.5-pro') {
+      return saved;
+    }
+    return 'llama-3.3-70b-versatile';
+  });
+
+  const setSelectedModel = (model) => {
+    setSelectedModelState(model);
+    try {
+      localStorage.setItem('umny_selected_model', model);
+    } catch {}
+  };
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeToolExecution, setActiveToolExecution] = useState(null);
   const [attachments, setAttachments] = useState([]);

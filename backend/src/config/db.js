@@ -57,7 +57,7 @@ async function seedInitialAdmin() {
         role: 'admin',
         preferences: {
           theme: 'dark',
-          defaultModel: 'gemini-2.5-flash',
+          defaultModel: 'llama-3.3-70b-versatile',
           memoryEnabled: true,
           temperature: 0.7,
         },

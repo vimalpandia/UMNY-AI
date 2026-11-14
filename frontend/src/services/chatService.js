@@ -7,7 +7,7 @@ export const chatService = {
     return res.data;
   },
 
-  async createConversation(title = 'New Chat', selectedModel = 'gemini-2.5-flash') {
+  async createConversation(title = 'New Chat', selectedModel = 'llama-3.3-70b-versatile') {
     const res = await api.post('/conversations', { title, selectedModel });
     return res.data;
   },

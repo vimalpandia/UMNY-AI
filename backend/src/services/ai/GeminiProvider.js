@@ -93,6 +93,11 @@ class GeminiProvider extends AIProvider {
       };
     } catch (err) {
       console.error('[GeminiProvider Error]:', err.message);
+      if (err.message?.includes('403') || err.message?.includes('not available') || err.message?.includes('free tier')) {
+        throw new Error(
+          'Google Gemini Free Tier Unavailable (403 Forbidden). UMNY AI default provider is Groq. Please switch your model to Groq Llama 3.3 in the model selector, or configure a paid Gemini API key.'
+        );
+      }
       throw new Error(`Google Gemini Error: ${err.message}`);
     }
   }

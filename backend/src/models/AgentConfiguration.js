@@ -23,7 +23,7 @@ const agentConfigurationSchema = new mongoose.Schema(
     },
     model: {
       type: String,
-      default: 'gemini-2.5-flash',
+      default: 'llama-3.3-70b-versatile',
     },
     maxSteps: {
       type: Number,

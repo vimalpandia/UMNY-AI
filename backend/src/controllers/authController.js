@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const { generateToken } = require('../utils/jwt');
 const { isConnected } = require('../config/db');
+const { DEFAULT_MODEL } = require('../config/constants');
 
 // In-memory fallback user cache for local development/testing if database is temporarily connecting
 const localUsers = new Map();
@@ -28,7 +29,7 @@ const authController = {
           role: 'user',
           preferences: {
             theme: 'dark',
-            defaultModel: 'gemini-2.5-flash',
+            defaultModel: DEFAULT_MODEL,
             memoryEnabled: true,
             temperature: 0.7,
           },
@@ -65,7 +66,7 @@ const authController = {
           role: normalizedEmail.includes('admin') ? 'admin' : 'user',
           preferences: {
             theme: 'dark',
-            defaultModel: 'gemini-2.5-flash',
+            defaultModel: DEFAULT_MODEL,
             memoryEnabled: true,
             temperature: 0.7,
           },
@@ -144,7 +145,7 @@ const authController = {
               role: 'admin',
               preferences: {
                 theme: 'dark',
-                defaultModel: 'gemini-2.5-flash',
+                defaultModel: DEFAULT_MODEL,
                 memoryEnabled: true,
                 temperature: 0.7,
               },
@@ -200,7 +201,7 @@ const authController = {
           role: req.user.role,
           preferences: req.user.preferences || {
             theme: 'dark',
-            defaultModel: 'gemini-2.5-flash',
+            defaultModel: DEFAULT_MODEL,
             memoryEnabled: true,
             temperature: 0.7,
           },

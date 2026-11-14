@@ -30,6 +30,19 @@ describe('UMNY AI Conversations & Memory API', () => {
     expect(res.body.title).toEqual('Project Architecture Planning');
   });
 
+  it('POST /api/conversations should default to Groq model when selectedModel is omitted', async () => {
+    const res = await request(app)
+      .post('/api/conversations')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        title: 'Default Model Chat',
+      });
+
+    expect(res.statusCode).toEqual(201);
+    expect(res.body).toHaveProperty('_id');
+    expect(res.body.selectedModel).toEqual('llama-3.3-70b-versatile');
+  });
+
   it('GET /api/conversations should list conversations for user', async () => {
     const res = await request(app)
       .get('/api/conversations')

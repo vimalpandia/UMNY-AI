@@ -20,6 +20,7 @@ const env = {
   GROQ_API_KEY: process.env.GROQ_API_KEY || '',
   GROQ_BASE_URL: process.env.GROQ_BASE_URL || 'https://api.groq.com/openai/v1',
   GROQ_MODEL: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
+  DEFAULT_MODEL: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
   
   // CORS origin
   CORS_ORIGIN: process.env.CORS_ORIGIN || '*',

@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
       },
       defaultModel: {
         type: String,
-        default: 'gemini-2.5-flash',
+        default: 'llama-3.3-70b-versatile',
       },
       temperature: {
         type: Number,

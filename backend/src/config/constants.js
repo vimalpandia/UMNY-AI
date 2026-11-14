@@ -1,22 +1,22 @@
 module.exports = {
   MODELS: {
+    GROQ_LLAMA_70B: 'llama-3.3-70b-versatile',
+    GROQ_LLAMA_8B: 'llama-3.1-8b-instant',
+    GROQ_MIXTRAL: 'mixtral-8x7b-32768',
     GEMINI_FLASH: 'gemini-2.5-flash',
     GEMINI_PRO: 'gemini-2.5-pro',
     GPT_4O: 'gpt-4o',
     GPT_4O_MINI: 'gpt-4o-mini',
     CLAUDE_SONNET: 'claude-3-5-sonnet',
     CLAUDE_HAIKU: 'claude-3-5-haiku',
-    GROQ_LLAMA_70B: 'llama-3.3-70b-versatile',
-    GROQ_LLAMA_8B: 'llama-3.1-8b-instant',
-    GROQ_MIXTRAL: 'mixtral-8x7b-32768',
   },
   PROVIDERS: {
+    GROQ: 'groq',
     GOOGLE: 'google',
     OPENAI: 'openai',
     ANTHROPIC: 'anthropic',
-    GROQ: 'groq',
   },
-  DEFAULT_MODEL: 'gemini-2.5-flash',
+  DEFAULT_MODEL: 'llama-3.3-70b-versatile',
   ROLES: {
     USER: 'user',
     ADMIN: 'admin',

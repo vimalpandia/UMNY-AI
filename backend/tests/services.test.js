@@ -72,6 +72,12 @@ describe('UMNY AI Services & Autonomous Engine Unit Tests', () => {
       expect(provider.name).toEqual('groq');
     });
 
+    it('should route null or omitted model to GroqProvider by default', () => {
+      const provider = aiService.getProviderForModel(null);
+      expect(provider.name).toEqual('groq');
+      expect(aiService.getDefaultModel()).toEqual('llama-3.3-70b-versatile');
+    });
+
     it('should throw an error and never silently switch on unsupported models', () => {
       expect(() => {
         aiService.getProviderForModel('unsupported-custom-ai-v99');

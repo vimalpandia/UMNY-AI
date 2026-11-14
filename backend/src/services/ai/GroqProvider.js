@@ -11,11 +11,23 @@ class GroqProvider extends AIProvider {
   }
 
   getClient() {
-    const currentKey = process.env.GROQ_API_KEY || env.GROQ_API_KEY;
-    const currentBaseUrl =
-      process.env.GROQ_BASE_URL || env.GROQ_BASE_URL || 'https://api.groq.com/openai/v1';
+    const rawKey = process.env.GROQ_API_KEY || env.GROQ_API_KEY || '';
+    const currentKey = rawKey.trim();
+    const currentBaseUrl = (
+      process.env.GROQ_BASE_URL ||
+      env.GROQ_BASE_URL ||
+      'https://api.groq.com/openai/v1'
+    ).trim();
 
-    if (!currentKey) return null;
+    if (
+      !currentKey ||
+      currentKey === 'your_groq_api_key_here' ||
+      currentKey.startsWith('your_') ||
+      currentKey === 'undefined' ||
+      currentKey === 'null'
+    ) {
+      return null;
+    }
 
     if (!this.client || this.apiKey !== currentKey || this.baseURL !== currentBaseUrl) {
       this.apiKey = currentKey;
@@ -33,6 +45,7 @@ class GroqProvider extends AIProvider {
     if (!model) return false;
     const m = model.toLowerCase();
     return (
+      m === 'default' ||
       m.startsWith('groq/') ||
       m.includes('llama') ||
       m.includes('mixtral') ||
@@ -47,7 +60,7 @@ class GroqProvider extends AIProvider {
   }
 
   resolveModelName(model) {
-    if (!model || model === 'groq') {
+    if (!model || model === 'groq' || model === 'default') {
       return process.env.GROQ_MODEL || env.GROQ_MODEL || 'llama-3.3-70b-versatile';
     }
     if (model.startsWith('groq/')) {
@@ -63,17 +76,48 @@ class GroqProvider extends AIProvider {
     console.error('[GroqProvider Error]:', err.message);
 
     const status = err.status || err.statusCode;
-    if (status === 401 || err.message?.includes('401') || err.message?.includes('Invalid API Key')) {
-      return new Error('Groq Authentication Error: Invalid or inactive API key. Please verify GROQ_API_KEY in your Render dashboard or .env file.');
+    const msg = (err.message || '').toLowerCase();
+
+    if (
+      status === 401 ||
+      msg.includes('401') ||
+      msg.includes('invalid api key') ||
+      msg.includes('invalid_api_key') ||
+      msg.includes('unauthorized') ||
+      msg.includes('authentication')
+    ) {
+      return new Error(
+        'Groq Authentication Error: Invalid or inactive API key. Please check GROQ_API_KEY in your Render dashboard or .env file. Generate a free key at https://console.groq.com/keys'
+      );
     }
-    if (status === 429 || err.message?.includes('429') || err.message?.includes('Rate limit')) {
-      return new Error('Groq Rate Limit Exceeded: Free developer tier quota limit reached. Please wait a few moments before sending another request.');
+    if (
+      status === 429 ||
+      msg.includes('429') ||
+      msg.includes('rate limit') ||
+      msg.includes('quota')
+    ) {
+      return new Error(
+        'Groq Rate Limit Exceeded: Free developer tier rate limit reached. Please wait a few moments before sending another request.'
+      );
     }
-    if (status === 404 || err.message?.includes('model_not_found') || err.message?.includes('does not exist')) {
-      return new Error(`Groq Model Error: Model "${modelName}" is not available or decommissioned on Groq. Please select an active model such as llama-3.3-70b-versatile.`);
+    if (
+      status === 404 ||
+      msg.includes('model_not_found') ||
+      msg.includes('does not exist')
+    ) {
+      return new Error(
+        `Groq Model Error: Model "${modelName}" is not available or decommissioned on Groq. Please select an active model such as llama-3.3-70b-versatile.`
+      );
     }
-    if (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND' || err.message?.includes('fetch failed')) {
-      return new Error('Groq Network Error: Unable to reach Groq API endpoint. Please verify your network connection and GROQ_BASE_URL.');
+    if (
+      err.code === 'ECONNREFUSED' ||
+      err.code === 'ENOTFOUND' ||
+      msg.includes('fetch failed') ||
+      msg.includes('network')
+    ) {
+      return new Error(
+        'Groq Network Error: Unable to reach Groq API endpoint. Please verify your network connection and GROQ_BASE_URL.'
+      );
     }
 
     return new Error(`Groq Error: ${err.message}`);

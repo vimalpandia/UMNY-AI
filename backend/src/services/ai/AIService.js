@@ -8,24 +8,32 @@ const Message = require('../../models/Message');
 const Conversation = require('../../models/Conversation');
 const UsageLog = require('../../models/UsageLog');
 const { isConnected } = require('../../config/db');
+const env = require('../../config/env');
+const { DEFAULT_MODEL } = require('../../config/constants');
 
 class AIService {
   constructor() {
     this.providers = [
+      new GroqProvider(),
       new GeminiProvider(),
       new OpenAIProvider(),
       new AnthropicProvider(),
-      new GroqProvider(),
     ];
   }
 
+  getDefaultModel() {
+    return process.env.GROQ_MODEL || env.GROQ_MODEL || DEFAULT_MODEL || 'llama-3.3-70b-versatile';
+  }
+
   getProviderForModel(model) {
-    if (!model) {
-      return this.providers[0];
+    if (!model || model === 'default') {
+      return this.providers[0]; // GroqProvider
     }
     const provider = this.providers.find((p) => p.supportsModel(model));
     if (!provider) {
-      throw new Error(`Unsupported model identifier: "${model}". Please select a supported model from Google, OpenAI, Anthropic, or Groq.`);
+      throw new Error(
+        `Unsupported model identifier: "${model}". Please select a supported model from Groq, OpenAI, Anthropic, or Google.`
+      );
     }
     return provider;
   }
@@ -67,13 +75,14 @@ class AIService {
     user,
     conversationId,
     content,
-    model = 'gemini-2.5-flash',
+    model,
     attachments = [],
     agentMode = false,
     onChunk,
     onToolProgress,
   }) {
-    const provider = this.getProviderForModel(model);
+    const resolvedModel = (!model || model === 'default') ? this.getDefaultModel() : model;
+    const provider = this.getProviderForModel(resolvedModel);
 
     // 1. Fetch relevant long-term memories if enabled
     let memories = [];
@@ -127,7 +136,7 @@ class AIService {
     let result;
     try {
       result = await provider.streamChat({
-        model,
+        model: resolvedModel,
         messages: historyMessages,
         systemInstruction,
         temperature: user?.preferences?.temperature ?? 0.7,
@@ -140,7 +149,7 @@ class AIService {
           await UsageLog.create({
             userId,
             provider: provider.name,
-            model,
+            model: resolvedModel,
             tokenUsage: result.tokenUsage || { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
             requestStatus: 'success',
           });
@@ -161,7 +170,7 @@ class AIService {
             role: 'user',
             content,
             attachments,
-            model,
+            model: resolvedModel,
           });
 
           savedAssistantMsg = await Message.create({
@@ -169,7 +178,7 @@ class AIService {
             userId,
             role: 'assistant',
             content: result.content,
-            model,
+            model: resolvedModel,
             toolCalls: executedTools,
             tokenUsage: result.tokenUsage,
           });
@@ -187,7 +196,7 @@ class AIService {
 
       return {
         content: result.content,
-        model,
+        model: resolvedModel,
         toolCalls: executedTools,
         tokenUsage: result.tokenUsage,
         message: savedAssistantMsg || {
@@ -195,7 +204,7 @@ class AIService {
           conversationId,
           role: 'assistant',
           content: result.content,
-          model,
+          model: resolvedModel,
           toolCalls: executedTools,
           createdAt: new Date().toISOString(),
         },
@@ -206,7 +215,7 @@ class AIService {
           await UsageLog.create({
             userId,
             provider: provider.name,
-            model,
+            model: resolvedModel,
             requestStatus: 'error',
             errorMessage: err.message,
           });

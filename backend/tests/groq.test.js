@@ -22,6 +22,7 @@ describe('Groq AI Provider & Streaming Integration Tests', () => {
       expect(groqProvider.supportsModel('mixtral-8x7b-32768')).toBe(true);
       expect(groqProvider.supportsModel('groq/custom-model')).toBe(true);
       expect(groqProvider.supportsModel('gemma2-9b-it')).toBe(true);
+      expect(groqProvider.supportsModel('default')).toBe(true);
     });
 
     it('should reject non-groq models', () => {
@@ -34,6 +35,7 @@ describe('Groq AI Provider & Streaming Integration Tests', () => {
     it('should strip groq/ prefix when resolving model names', () => {
       expect(groqProvider.resolveModelName('groq/llama-3.3-70b-versatile')).toBe('llama-3.3-70b-versatile');
       expect(groqProvider.resolveModelName('llama-3.1-8b-instant')).toBe('llama-3.1-8b-instant');
+      expect(groqProvider.resolveModelName('default')).toBe('llama-3.3-70b-versatile');
     });
 
     it('should fallback to default model if none specified', () => {
@@ -180,6 +182,30 @@ describe('Groq AI Provider & Streaming Integration Tests', () => {
       expect(provider.name).toBe('groq');
     });
 
+    it('should route null/undefined and default to Groq by default', () => {
+      const defaultProvider = aiService.getProviderForModel(null);
+      expect(defaultProvider).toBeDefined();
+      expect(defaultProvider.name).toBe('groq');
+
+      const namedDefaultProvider = aiService.getProviderForModel('default');
+      expect(namedDefaultProvider).toBeDefined();
+      expect(namedDefaultProvider.name).toBe('groq');
+    });
+
+    it('should return Groq model as the system default model', () => {
+      expect(aiService.getDefaultModel()).toBe('llama-3.3-70b-versatile');
+    });
+
+    it('should treat placeholder API keys as unconfigured', () => {
+      process.env.GROQ_API_KEY = 'your_groq_api_key_here';
+      const provider = new GroqProvider();
+      expect(provider.getClient()).toBeNull();
+
+      process.env.GROQ_API_KEY = '   ';
+      const provider2 = new GroqProvider();
+      expect(provider2.getClient()).toBeNull();
+    });
+
     it('should never silently fallback on unsupported model', () => {
       expect(() => {
         aiService.getProviderForModel('fake-unsupported-model-x');
@@ -187,3 +213,4 @@ describe('Groq AI Provider & Streaming Integration Tests', () => {
     });
   });
 });
+

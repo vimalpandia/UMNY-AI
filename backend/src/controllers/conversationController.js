@@ -1,6 +1,7 @@
 const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
 const { isConnected } = require('../config/db');
+const { DEFAULT_MODEL } = require('../config/constants');
 
 // In-memory fallback conversations cache
 const localConversations = new Map();
@@ -34,7 +35,7 @@ const conversationController = {
   async createConversation(req, res, next) {
     try {
       const userId = req.user._id || req.user.id;
-      const { title = 'New Chat', selectedModel = 'gemini-2.5-flash' } = req.body;
+      const { title = 'New Chat', selectedModel = DEFAULT_MODEL } = req.body;
 
       if (isConnected()) {
         const conv = await Conversation.create({
