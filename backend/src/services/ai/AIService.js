@@ -9,7 +9,7 @@ const Conversation = require('../../models/Conversation');
 const UsageLog = require('../../models/UsageLog');
 const { isConnected } = require('../../config/db');
 const env = require('../../config/env');
-const { DEFAULT_MODEL } = require('../../config/constants');
+const { DEFAULT_MODEL, DEPRECATED_MODELS } = require('../../config/constants');
 
 class AIService {
   constructor() {
@@ -21,13 +21,28 @@ class AIService {
     ];
   }
 
+  isModelDeprecated(model) {
+    if (!model) return false;
+    const clean = model.toLowerCase().replace('groq/', '').trim();
+    return (DEPRECATED_MODELS || []).some((dep) => dep.replace('groq/', '').trim() === clean);
+  }
+
   getDefaultModel() {
-    return process.env.GROQ_MODEL || env.GROQ_MODEL || DEFAULT_MODEL || 'llama-3.3-70b-versatile';
+    const configured = process.env.GROQ_MODEL || env.GROQ_MODEL;
+    if (configured && !this.isModelDeprecated(configured)) {
+      return configured;
+    }
+    return DEFAULT_MODEL || 'llama-3.1-8b-instant';
   }
 
   getProviderForModel(model) {
     if (!model || model === 'default') {
       return this.providers[0]; // GroqProvider
+    }
+    if (this.isModelDeprecated(model)) {
+      throw new Error(
+        `Model "${model}" has been decommissioned by Groq as of August 16, 2026. Please select an active model such as "${this.getDefaultModel()}".`
+      );
     }
     const provider = this.providers.find((p) => p.supportsModel(model));
     if (!provider) {
@@ -36,6 +51,97 @@ class AIService {
       );
     }
     return provider;
+  }
+
+  /**
+   * Return dynamic list of supported models across all providers
+   */
+  async getAvailableModels() {
+    const groqProvider = this.providers.find((p) => p.name === 'groq');
+    let dynamicGroqModels = [];
+    if (groqProvider && typeof groqProvider.discoverModels === 'function') {
+      try {
+        dynamicGroqModels = await groqProvider.discoverModels();
+      } catch (err) {
+        console.warn('[AIService] Failed to discover Groq models dynamically:', err.message);
+      }
+    }
+
+    const defaultModelId = this.getDefaultModel();
+
+    const groqList = (dynamicGroqModels.length > 0 ? dynamicGroqModels : [
+      {
+        id: 'llama-3.1-8b-instant',
+        name: 'Llama 3.1 8B Instant',
+        provider: 'Groq',
+        badge: 'Ultra-Fast',
+        description: 'High-speed 128k context reasoning optimized on Groq LPU hardware.',
+      },
+      {
+        id: 'mixtral-8x7b-32768',
+        name: 'Mixtral 8x7B (32k)',
+        provider: 'Groq',
+        badge: 'High Context',
+        description: 'Mixture-of-Experts architecture with 32,768 token window on Groq.',
+      },
+    ]).map((m) => ({
+      ...m,
+      isDefault: m.id === defaultModelId,
+      badge: m.id === defaultModelId ? `Default • ${m.badge}` : m.badge,
+    }));
+
+    const otherModels = [
+      {
+        id: 'gpt-4o',
+        name: 'GPT-4o',
+        provider: 'OpenAI',
+        badge: 'Flagship',
+        description: 'Omni-model reasoning with versatile text and multimodal fluency.',
+        isDefault: 'gpt-4o' === defaultModelId,
+      },
+      {
+        id: 'gpt-4o-mini',
+        name: 'GPT-4o Mini',
+        provider: 'OpenAI',
+        badge: 'Lightweight',
+        description: 'Affordable, low-latency conversational powerhouse.',
+        isDefault: 'gpt-4o-mini' === defaultModelId,
+      },
+      {
+        id: 'claude-3-5-sonnet',
+        name: 'Claude 3.5 Sonnet',
+        provider: 'Anthropic',
+        badge: 'Expert Code & Logic',
+        description: 'Premier coding, architectural planning, and articulate prose.',
+        isDefault: 'claude-3-5-sonnet' === defaultModelId,
+      },
+      {
+        id: 'claude-3-5-haiku',
+        name: 'Claude 3.5 Haiku',
+        provider: 'Anthropic',
+        badge: 'Rapid',
+        description: 'Super-fast lightweight intelligence for instant workflows.',
+        isDefault: 'claude-3-5-haiku' === defaultModelId,
+      },
+      {
+        id: 'gemini-2.5-flash',
+        name: 'Gemini 2.5 Flash',
+        provider: 'Google',
+        badge: 'Optional',
+        description: 'High-speed multimodal intelligence (requires active Gemini API key).',
+        isDefault: 'gemini-2.5-flash' === defaultModelId,
+      },
+      {
+        id: 'gemini-2.5-pro',
+        name: 'Gemini 2.5 Pro',
+        provider: 'Google',
+        badge: 'Optional Reasoning',
+        description: 'Deep mathematical analysis (requires active Gemini API key).',
+        isDefault: 'gemini-2.5-pro' === defaultModelId,
+      },
+    ];
+
+    return [...groqList, ...otherModels];
   }
 
   buildSystemInstruction(user, memories = [], toolResults = []) {

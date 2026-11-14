@@ -1,13 +1,18 @@
 import api, { getApiBaseUrl } from './api';
 
 export const chatService = {
+  async getAvailableModels() {
+    const res = await api.get('/models');
+    return res.data;
+  },
+
   async getConversations(search = '') {
     const params = search ? { search } : {};
     const res = await api.get('/conversations', { params });
     return res.data;
   },
 
-  async createConversation(title = 'New Chat', selectedModel = 'llama-3.3-70b-versatile') {
+  async createConversation(title = 'New Chat', selectedModel = 'llama-3.1-8b-instant') {
     const res = await api.post('/conversations', { title, selectedModel });
     return res.data;
   },

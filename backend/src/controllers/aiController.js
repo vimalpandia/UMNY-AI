@@ -10,13 +10,19 @@ const aiController = {
       return res.status(400).json({ message: 'Content or attachment is required.' });
     }
 
+    if (model && aiService.isModelDeprecated(model)) {
+      return res.status(400).json({
+        message: `Model "${model}" has been decommissioned by Groq as of August 16, 2026. Please select an active model such as "${aiService.getDefaultModel()}".`,
+      });
+    }
+
     try {
       const result = await aiService.streamChat({
         userId,
         user: req.user,
         conversationId,
         content: content || '',
-        model: model || 'llama-3.3-70b-versatile',
+        model: model || aiService.getDefaultModel(),
         attachments: attachments || [],
         agentMode: !!agentMode,
       });
@@ -34,6 +40,12 @@ const aiController = {
 
     if (!content && (!attachments || attachments.length === 0)) {
       return res.status(400).json({ message: 'Content or attachment is required.' });
+    }
+
+    if (model && aiService.isModelDeprecated(model)) {
+      return res.status(400).json({
+        message: `Model "${model}" has been decommissioned by Groq as of August 16, 2026. Please select an active model such as "${aiService.getDefaultModel()}".`,
+      });
     }
 
     // Set SSE headers
@@ -76,75 +88,14 @@ const aiController = {
     }
   },
 
-  getAvailableModels(req, res) {
-    const models = [
-      {
-        id: 'llama-3.3-70b-versatile',
-        name: 'Llama 3.3 70B Versatile',
-        provider: 'Groq',
-        badge: 'Default • Fast & Free',
-        description: 'State-of-the-art open reasoning on Groq LPU hardware with 128k context.',
-        isDefault: true,
-      },
-      {
-        id: 'llama-3.1-8b-instant',
-        name: 'Llama 3.1 8B Instant',
-        provider: 'Groq',
-        badge: 'Instant Speed',
-        description: 'Ultra-low-latency real-time responses on Groq free developer tier.',
-      },
-      {
-        id: 'mixtral-8x7b-32768',
-        name: 'Mixtral 8x7B (32k)',
-        provider: 'Groq',
-        badge: 'High Context',
-        description: 'Mixture-of-Experts architecture with 32,768 token window on Groq.',
-      },
-      {
-        id: 'gpt-4o',
-        name: 'GPT-4o',
-        provider: 'OpenAI',
-        badge: 'Flagship',
-        description: 'Omni-model reasoning with versatile text and multimodal fluency.',
-      },
-      {
-        id: 'gpt-4o-mini',
-        name: 'GPT-4o Mini',
-        provider: 'OpenAI',
-        badge: 'Lightweight',
-        description: 'Affordable, low-latency conversational powerhouse.',
-      },
-      {
-        id: 'claude-3-5-sonnet',
-        name: 'Claude 3.5 Sonnet',
-        provider: 'Anthropic',
-        badge: 'Expert Code & Logic',
-        description: 'Premier coding, architectural planning, and articulate prose.',
-      },
-      {
-        id: 'claude-3-5-haiku',
-        name: 'Claude 3.5 Haiku',
-        provider: 'Anthropic',
-        badge: 'Rapid',
-        description: 'Super-fast lightweight intelligence for instant workflows.',
-      },
-      {
-        id: 'gemini-2.5-flash',
-        name: 'Gemini 2.5 Flash',
-        provider: 'Google',
-        badge: 'Optional',
-        description: 'High-speed multimodal intelligence (requires active Gemini API key).',
-      },
-      {
-        id: 'gemini-2.5-pro',
-        name: 'Gemini 2.5 Pro',
-        provider: 'Google',
-        badge: 'Optional Reasoning',
-        description: 'Deep mathematical analysis (requires active Gemini API key).',
-      },
-    ];
-
-    res.json(models);
+  async getAvailableModels(req, res, next) {
+    try {
+      const models = await aiService.getAvailableModels();
+      res.json(models);
+    } catch (err) {
+      console.error('[AI Controller] Error discovering available models:', err.message);
+      next(err);
+    }
   },
 };
 

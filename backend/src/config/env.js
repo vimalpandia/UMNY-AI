@@ -19,8 +19,8 @@ const env = {
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || '',
   GROQ_API_KEY: process.env.GROQ_API_KEY || '',
   GROQ_BASE_URL: process.env.GROQ_BASE_URL || 'https://api.groq.com/openai/v1',
-  GROQ_MODEL: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
-  DEFAULT_MODEL: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
+  GROQ_MODEL: process.env.GROQ_MODEL || 'llama-3.1-8b-instant',
+  DEFAULT_MODEL: process.env.GROQ_MODEL || 'llama-3.1-8b-instant',
   
   // CORS origin
   CORS_ORIGIN: process.env.CORS_ORIGIN || '*',

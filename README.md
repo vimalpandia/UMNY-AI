@@ -11,7 +11,7 @@
 ## 🌟 Key Features
 
 ### 1. Multi-Model Foundational Intelligence
-- **Modular AI Provider Architecture**: Seamlessly route queries between Groq LPU (`llama-3.3-70b-versatile`, `llama-3.1-8b-instant`, `mixtral-8x7b-32768`), Google Gemini (`gemini-2.5-flash`, `gemini-2.5-pro`), OpenAI (`gpt-4o`, `gpt-4o-mini`), and Anthropic Claude (`claude-3-5-sonnet`, `claude-3-5-haiku`).
+- **Modular AI Provider Architecture**: Seamlessly route queries between Groq LPU (`llama-3.1-8b-instant`, `mixtral-8x7b-32768`), Google Gemini (`gemini-2.5-flash`, `gemini-2.5-pro`), OpenAI (`gpt-4o`, `gpt-4o-mini`), and Anthropic Claude (`claude-3-5-sonnet`, `claude-3-5-haiku`). Dynamic model discovery via `GET https://api.groq.com/openai/v1/models`.
 - **Free Developer Tier Ready**: Built-in native integration for Groq's high-speed free developer tier API.
 - **Real-Time Streaming**: High-throughput Server-Sent Events (SSE) streaming with cancellation and retry support.
 - **Provider Redundancy**: Gracefully reports provider key availability with zero application crashes.
@@ -162,7 +162,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 ANTHROPIC_API_KEY=your_anthropic_api_key_here
 GROQ_API_KEY=your_groq_api_key_here
 GROQ_BASE_URL=https://api.groq.com/openai/v1
-GROQ_MODEL=llama-3.3-70b-versatile
+GROQ_MODEL=llama-3.1-8b-instant
 ```
 
 ### 3. Build & Run Locally
@@ -210,7 +210,7 @@ This repository includes a pre-configured `render.yaml` blueprint for one-click 
    - `MONGODB_URI`: Your MongoDB Atlas cluster connection string.
    - `GROQ_API_KEY`: Groq API key from https://console.groq.com/keys (Recommended free provider).
    - `GROQ_BASE_URL`: `https://api.groq.com/openai/v1`
-   - `GROQ_MODEL`: `llama-3.3-70b-versatile`
+   - `GROQ_MODEL`: `llama-3.1-8b-instant` (or any active model from Groq)
    - `GEMINI_API_KEY`: Google Gemini API key (optional).
    - `OPENAI_API_KEY`: OpenAI API key (optional).
    - `ANTHROPIC_API_KEY`: Anthropic Claude API key (optional).

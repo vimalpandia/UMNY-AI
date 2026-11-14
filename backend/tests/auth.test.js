@@ -14,13 +14,19 @@ describe('UMNY AI Authentication & System Health API', () => {
     const res = await request(app).get('/api/models');
     expect(res.statusCode).toEqual(200);
     expect(Array.isArray(res.body)).toBeTruthy();
-    expect(res.body[0].id).toEqual('llama-3.3-70b-versatile');
+    expect(res.body[0].id).toEqual('llama-3.1-8b-instant');
     expect(res.body[0].provider).toEqual('Groq');
     const modelIds = res.body.map((m) => m.id);
-    expect(modelIds).toContain('llama-3.3-70b-versatile');
+    expect(modelIds).toContain('llama-3.1-8b-instant');
+    expect(modelIds).not.toContain('llama-3.3-70b-versatile');
     expect(modelIds).toContain('gemini-2.5-flash');
     expect(modelIds).toContain('gpt-4o');
     expect(modelIds).toContain('claude-3-5-sonnet');
+
+    // Verify compliance: No models claim "Free" without verified billing
+    res.body.forEach((m) => {
+      expect((m.badge || '').toLowerCase()).not.toContain('free');
+    });
   });
 
   it('POST /api/auth/register should create a new user account and return JWT token', async () => {

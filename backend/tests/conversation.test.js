@@ -40,7 +40,7 @@ describe('UMNY AI Conversations & Memory API', () => {
 
     expect(res.statusCode).toEqual(201);
     expect(res.body).toHaveProperty('_id');
-    expect(res.body.selectedModel).toEqual('llama-3.3-70b-versatile');
+    expect(res.body.selectedModel).toEqual('llama-3.1-8b-instant');
   });
 
   it('GET /api/conversations should list conversations for user', async () => {

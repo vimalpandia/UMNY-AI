@@ -23,7 +23,7 @@ const agentConfigurationSchema = new mongoose.Schema(
     },
     model: {
       type: String,
-      default: 'llama-3.3-70b-versatile',
+      default: 'llama-3.1-8b-instant',
     },
     maxSteps: {
       type: Number,

@@ -63,7 +63,7 @@ describe('UMNY AI Services & Autonomous Engine Unit Tests', () => {
     });
 
     it('should route groq llama models to GroqProvider', () => {
-      const provider = aiService.getProviderForModel('llama-3.3-70b-versatile');
+      const provider = aiService.getProviderForModel('llama-3.1-8b-instant');
       expect(provider.name).toEqual('groq');
     });
 
@@ -75,7 +75,13 @@ describe('UMNY AI Services & Autonomous Engine Unit Tests', () => {
     it('should route null or omitted model to GroqProvider by default', () => {
       const provider = aiService.getProviderForModel(null);
       expect(provider.name).toEqual('groq');
-      expect(aiService.getDefaultModel()).toEqual('llama-3.3-70b-versatile');
+      expect(aiService.getDefaultModel()).toEqual('llama-3.1-8b-instant');
+    });
+
+    it('should throw an error and reject deprecated models like llama-3.3-70b-versatile', () => {
+      expect(() => {
+        aiService.getProviderForModel('llama-3.3-70b-versatile');
+      }).toThrow('decommissioned by Groq');
     });
 
     it('should throw an error and never silently switch on unsupported models', () => {

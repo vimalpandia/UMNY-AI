@@ -1,7 +1,7 @@
 const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
 const { isConnected } = require('../config/db');
-const { DEFAULT_MODEL } = require('../config/constants');
+const { DEFAULT_MODEL, DEPRECATED_MODELS } = require('../config/constants');
 
 // In-memory fallback conversations cache
 const localConversations = new Map();
@@ -36,12 +36,18 @@ const conversationController = {
     try {
       const userId = req.user._id || req.user.id;
       const { title = 'New Chat', selectedModel = DEFAULT_MODEL } = req.body;
+      const safeModel =
+        DEPRECATED_MODELS.some(
+          (d) => (selectedModel || '').replace('groq/', '') === d.replace('groq/', '')
+        )
+          ? DEFAULT_MODEL
+          : selectedModel;
 
       if (isConnected()) {
         const conv = await Conversation.create({
           userId,
           title: title.trim(),
-          selectedModel,
+          selectedModel: safeModel,
         });
         return res.status(201).json(conv);
       }
@@ -50,7 +56,7 @@ const conversationController = {
         _id: 'conv_' + Date.now(),
         userId: userId.toString(),
         title: title.trim(),
-        selectedModel,
+        selectedModel: safeModel,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };

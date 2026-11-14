@@ -13,16 +13,19 @@ export const ChatProvider = ({ children }) => {
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [selectedModel, setSelectedModelState] = useState(() => {
     const saved = localStorage.getItem('umny_selected_model');
-    if (saved && saved !== 'gemini-2.5-flash' && saved !== 'gemini-2.5-pro') {
+    const deprecated = ['llama-3.3-70b-versatile', 'gemini-2.5-flash', 'gemini-2.5-pro', 'groq/compound'];
+    if (saved && !deprecated.includes(saved)) {
       return saved;
     }
-    return 'llama-3.3-70b-versatile';
+    return 'llama-3.1-8b-instant';
   });
 
   const setSelectedModel = (model) => {
-    setSelectedModelState(model);
+    const deprecated = ['llama-3.3-70b-versatile', 'groq/compound'];
+    const safeModel = deprecated.includes(model) ? 'llama-3.1-8b-instant' : model;
+    setSelectedModelState(safeModel);
     try {
-      localStorage.setItem('umny_selected_model', model);
+      localStorage.setItem('umny_selected_model', safeModel);
     } catch {}
   };
   const [isGenerating, setIsGenerating] = useState(false);

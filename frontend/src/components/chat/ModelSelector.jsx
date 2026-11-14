@@ -1,23 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check, Sparkles, Cpu, Zap, Flame } from 'lucide-react';
 import { useChat } from '../../context/ChatContext';
+import { chatService } from '../../services/chatService';
 
 export const AVAILABLE_MODELS = [
-  {
-    id: 'llama-3.3-70b-versatile',
-    name: 'Llama 3.3 70B Versatile',
-    provider: 'Groq',
-    badge: 'Default • Fast & Free',
-    iconColor: 'text-rose-400',
-    description: 'High-speed reasoning and deep coding on Groq LPU free developer tier.',
-  },
   {
     id: 'llama-3.1-8b-instant',
     name: 'Llama 3.1 8B Instant',
     provider: 'Groq',
-    badge: 'Instant Speed',
-    iconColor: 'text-pink-400',
-    description: 'Ultra-low-latency real-time responses on Groq free developer tier.',
+    badge: 'Default • Ultra-Fast',
+    iconColor: 'text-rose-400',
+    description: 'High-speed 128k context reasoning optimized on Groq LPU hardware.',
+    isDefault: true,
   },
   {
     id: 'mixtral-8x7b-32768',
@@ -77,12 +71,51 @@ export const AVAILABLE_MODELS = [
   },
 ];
 
+const DEPRECATED_IDS = ['llama-3.3-70b-versatile', 'groq/compound', 'groq/compound-mini', 'gemma-7b-it'];
+
 export default function ModelSelector() {
   const { selectedModel, setSelectedModel } = useChat();
+  const [models, setModels] = useState(AVAILABLE_MODELS);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const current = AVAILABLE_MODELS.find((m) => m.id === selectedModel) || AVAILABLE_MODELS[0];
+  // Dynamically load live models from backend
+  useEffect(() => {
+    let isMounted = true;
+    chatService
+      .getAvailableModels()
+      .then((data) => {
+        if (!isMounted || !Array.isArray(data) || data.length === 0) return;
+        const mapped = data.map((m) => {
+          let iconColor = 'text-brand-cyan';
+          if (m.provider === 'Groq') iconColor = 'text-rose-400';
+          else if (m.provider === 'OpenAI') iconColor = 'text-emerald-400';
+          else if (m.provider === 'Anthropic') iconColor = 'text-amber-400';
+          return { ...m, iconColor: m.iconColor || iconColor };
+        });
+        setModels(mapped);
+
+        // If current selection is deprecated or not in the loaded list, auto-switch to default
+        const defaultModel = mapped.find((m) => m.isDefault) || mapped[0];
+        if (
+          DEPRECATED_IDS.includes(selectedModel) ||
+          !mapped.some((m) => m.id === selectedModel)
+        ) {
+          if (defaultModel) {
+            setSelectedModel(defaultModel.id);
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn('Could not fetch dynamic models, using verified fallback list:', err.message);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const current = models.find((m) => m.id === selectedModel) || models[0];
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -100,7 +133,7 @@ export default function ModelSelector() {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-dark-850 hover:bg-slate-800 border border-slate-700/60 text-xs font-medium text-slate-200 transition-all shadow-sm"
       >
-        <Sparkles className={`w-3.5 h-3.5 ${current.iconColor}`} />
+        <Sparkles className={`w-3.5 h-3.5 ${current.iconColor || 'text-rose-400'}`} />
         <span className="font-semibold">{current.name}</span>
         <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-normal hidden sm:inline">
           {current.provider}
@@ -114,7 +147,7 @@ export default function ModelSelector() {
             Select Active AI Provider
           </div>
           <div className="space-y-1 max-h-80 overflow-y-auto">
-            {AVAILABLE_MODELS.map((model) => {
+            {models.map((model) => {
               const isSelected = model.id === selectedModel;
               return (
                 <div
@@ -150,4 +183,3 @@ export default function ModelSelector() {
     </div>
   );
 }
-

@@ -15,7 +15,7 @@ const conversationSchema = new mongoose.Schema(
     },
     selectedModel: {
       type: String,
-      default: 'llama-3.3-70b-versatile',
+      default: 'llama-3.1-8b-instant',
     },
     isPinned: {
       type: Boolean,

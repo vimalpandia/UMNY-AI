@@ -1,6 +1,5 @@
 module.exports = {
   MODELS: {
-    GROQ_LLAMA_70B: 'llama-3.3-70b-versatile',
     GROQ_LLAMA_8B: 'llama-3.1-8b-instant',
     GROQ_MIXTRAL: 'mixtral-8x7b-32768',
     GEMINI_FLASH: 'gemini-2.5-flash',
@@ -10,13 +9,22 @@ module.exports = {
     CLAUDE_SONNET: 'claude-3-5-sonnet',
     CLAUDE_HAIKU: 'claude-3-5-haiku',
   },
+  DEPRECATED_MODELS: [
+    'llama-3.3-70b-versatile',
+    'groq/llama-3.3-70b-versatile',
+    'groq/compound',
+    'groq/compound-mini',
+    'gemma-7b-it',
+    'llama-3-70b-8192',
+    'llama-3-8b-8192',
+  ],
   PROVIDERS: {
     GROQ: 'groq',
     GOOGLE: 'google',
     OPENAI: 'openai',
     ANTHROPIC: 'anthropic',
   },
-  DEFAULT_MODEL: 'llama-3.3-70b-versatile',
+  DEFAULT_MODEL: 'llama-3.1-8b-instant',
   ROLES: {
     USER: 'user',
     ADMIN: 'admin',
