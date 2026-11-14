@@ -51,6 +51,30 @@ export const AVAILABLE_MODELS = [
     iconColor: 'text-orange-400',
     description: 'Super-fast lightweight intelligence for instant workflows.',
   },
+  {
+    id: 'llama-3.3-70b-versatile',
+    name: 'Llama 3.3 70B Versatile',
+    provider: 'Groq',
+    badge: 'Ultra-Fast & Free',
+    iconColor: 'text-rose-400',
+    description: 'High-speed reasoning and deep coding on Groq LPU free developer tier.',
+  },
+  {
+    id: 'llama-3.1-8b-instant',
+    name: 'Llama 3.1 8B Instant',
+    provider: 'Groq',
+    badge: 'Instant Speed',
+    iconColor: 'text-pink-400',
+    description: 'Ultra-low-latency real-time responses on Groq free developer tier.',
+  },
+  {
+    id: 'mixtral-8x7b-32768',
+    name: 'Mixtral 8x7B (32k)',
+    provider: 'Groq',
+    badge: 'High Context',
+    iconColor: 'text-violet-400',
+    description: 'Mixture-of-Experts architecture with 32,768 token window on Groq.',
+  },
 ];
 
 export default function ModelSelector() {

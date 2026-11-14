@@ -4,6 +4,7 @@ const aiController = require('../controllers/aiController');
 const authMiddleware = require('../middleware/authMiddleware');
 const { aiLimiter } = require('../middleware/rateLimiter');
 
+router.post('/chat', authMiddleware, aiLimiter, aiController.chat);
 router.post('/chat/stream', authMiddleware, aiLimiter, aiController.streamChat);
 
 module.exports = router;

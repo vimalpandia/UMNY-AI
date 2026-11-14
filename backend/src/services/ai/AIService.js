@@ -1,6 +1,7 @@
 const GeminiProvider = require('./GeminiProvider');
 const OpenAIProvider = require('./OpenAIProvider');
 const AnthropicProvider = require('./AnthropicProvider');
+const GroqProvider = require('./GroqProvider');
 const memoryService = require('../memory/MemoryService');
 const agentService = require('../agents/AgentService');
 const Message = require('../../models/Message');
@@ -14,14 +15,17 @@ class AIService {
       new GeminiProvider(),
       new OpenAIProvider(),
       new AnthropicProvider(),
+      new GroqProvider(),
     ];
   }
 
   getProviderForModel(model) {
+    if (!model) {
+      return this.providers[0];
+    }
     const provider = this.providers.find((p) => p.supportsModel(model));
     if (!provider) {
-      // Default to Google Gemini provider
-      return this.providers[0];
+      throw new Error(`Unsupported model identifier: "${model}". Please select a supported model from Google, OpenAI, Anthropic, or Groq.`);
     }
     return provider;
   }

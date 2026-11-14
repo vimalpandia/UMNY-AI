@@ -61,6 +61,22 @@ describe('UMNY AI Services & Autonomous Engine Unit Tests', () => {
       const provider = aiService.getProviderForModel('claude-3-5-sonnet');
       expect(provider.name).toEqual('anthropic');
     });
+
+    it('should route groq llama models to GroqProvider', () => {
+      const provider = aiService.getProviderForModel('llama-3.3-70b-versatile');
+      expect(provider.name).toEqual('groq');
+    });
+
+    it('should route groq mixtral models to GroqProvider', () => {
+      const provider = aiService.getProviderForModel('mixtral-8x7b-32768');
+      expect(provider.name).toEqual('groq');
+    });
+
+    it('should throw an error and never silently switch on unsupported models', () => {
+      expect(() => {
+        aiService.getProviderForModel('unsupported-custom-ai-v99');
+      }).toThrow('Unsupported model identifier');
+    });
   });
 });
 

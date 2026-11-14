@@ -138,7 +138,7 @@ export default function AdminDashboard({ isOpen, onClose }) {
               <div className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">
                 AI Provider Distribution
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 <div className="p-3 rounded-xl bg-dark-900 border border-slate-800/80">
                   <div className="flex items-center justify-between text-xs font-medium text-slate-300 mb-1">
                     <span>Google Gemini</span>
@@ -166,6 +166,16 @@ export default function AdminDashboard({ isOpen, onClose }) {
                   </div>
                   <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
                     <div className="bg-amber-400 h-full w-full" />
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-dark-900 border border-slate-800/80">
+                  <div className="flex items-center justify-between text-xs font-medium text-slate-300 mb-1">
+                    <span>Groq</span>
+                    <span className="text-rose-400 font-mono">{stats?.providerStats?.groq ?? 0} req</span>
+                  </div>
+                  <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                    <div className="bg-rose-400 h-full w-full" />
                   </div>
                 </div>
               </div>

@@ -2,6 +2,32 @@ const aiService = require('../services/ai/AIService');
 const { MODELS } = require('../config/constants');
 
 const aiController = {
+  async chat(req, res, next) {
+    const { conversationId, content, model, attachments, agentMode } = req.body;
+    const userId = req.user._id || req.user.id;
+
+    if (!content && (!attachments || attachments.length === 0)) {
+      return res.status(400).json({ message: 'Content or attachment is required.' });
+    }
+
+    try {
+      const result = await aiService.streamChat({
+        userId,
+        user: req.user,
+        conversationId,
+        content: content || '',
+        model: model || 'llama-3.3-70b-versatile',
+        attachments: attachments || [],
+        agentMode: !!agentMode,
+      });
+
+      return res.json(result);
+    } catch (err) {
+      console.error('[AI Chat Controller Error]:', err.message);
+      next(err);
+    }
+  },
+
   async streamChat(req, res, next) {
     const { conversationId, content, model, attachments, agentMode } = req.body;
     const userId = req.user._id || req.user.id;
@@ -93,6 +119,27 @@ const aiController = {
         provider: 'Anthropic',
         badge: 'Rapid',
         description: 'Super-fast lightweight intelligence for instant workflows.',
+      },
+      {
+        id: 'llama-3.3-70b-versatile',
+        name: 'Llama 3.3 70B Versatile',
+        provider: 'Groq',
+        badge: 'Ultra-Fast & Free',
+        description: 'State-of-the-art open reasoning on Groq LPU hardware with 128k context.',
+      },
+      {
+        id: 'llama-3.1-8b-instant',
+        name: 'Llama 3.1 8B Instant',
+        provider: 'Groq',
+        badge: 'Instant Speed',
+        description: 'Ultra-low-latency real-time responses on Groq free developer tier.',
+      },
+      {
+        id: 'mixtral-8x7b-32768',
+        name: 'Mixtral 8x7B (32k)',
+        provider: 'Groq',
+        badge: 'High Context',
+        description: 'Mixture-of-Experts architecture with 32,768 token window on Groq.',
       },
     ];
 

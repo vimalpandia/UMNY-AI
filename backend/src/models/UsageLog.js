@@ -10,7 +10,7 @@ const usageLogSchema = new mongoose.Schema(
     },
     provider: {
       type: String,
-      enum: ['google', 'openai', 'anthropic', 'system'],
+      enum: ['google', 'openai', 'anthropic', 'groq', 'system'],
       required: true,
       index: true,
     },

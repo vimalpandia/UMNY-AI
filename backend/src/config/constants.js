@@ -6,11 +6,15 @@ module.exports = {
     GPT_4O_MINI: 'gpt-4o-mini',
     CLAUDE_SONNET: 'claude-3-5-sonnet',
     CLAUDE_HAIKU: 'claude-3-5-haiku',
+    GROQ_LLAMA_70B: 'llama-3.3-70b-versatile',
+    GROQ_LLAMA_8B: 'llama-3.1-8b-instant',
+    GROQ_MIXTRAL: 'mixtral-8x7b-32768',
   },
   PROVIDERS: {
     GOOGLE: 'google',
     OPENAI: 'openai',
     ANTHROPIC: 'anthropic',
+    GROQ: 'groq',
   },
   DEFAULT_MODEL: 'gemini-2.5-flash',
   ROLES: {

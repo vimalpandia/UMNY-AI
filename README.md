@@ -4,14 +4,15 @@
 
 ![UMNY AI Logo](frontend/public/logo.svg)
 
-**UMNY AI** is a production-ready, full-stack multi-model artificial intelligence platform. Designed as an independent assistant with its own distinct architecture, futuristic dark interface, and autonomous agent runtime, UMNY AI unifies the reasoning of Google Gemini, OpenAI GPT-4o, and Anthropic Claude alongside long-term user memory, document analysis, voice processing, and tool calling.
+**UMNY AI** is a production-ready, full-stack multi-model artificial intelligence platform. Designed as an independent assistant with its own distinct architecture, futuristic dark interface, and autonomous agent runtime, UMNY AI unifies the reasoning of Groq (Free LPU Developer API), Google Gemini, OpenAI GPT-4o, and Anthropic Claude alongside long-term user memory, document analysis, voice processing, and tool calling.
 
 ---
 
 ## 🌟 Key Features
 
 ### 1. Multi-Model Foundational Intelligence
-- **Modular AI Provider Architecture**: Seamlessly route queries between Google Gemini (`gemini-2.5-flash`, `gemini-2.5-pro`), OpenAI (`gpt-4o`, `gpt-4o-mini`), and Anthropic Claude (`claude-3-5-sonnet`, `claude-3-5-haiku`).
+- **Modular AI Provider Architecture**: Seamlessly route queries between Groq LPU (`llama-3.3-70b-versatile`, `llama-3.1-8b-instant`, `mixtral-8x7b-32768`), Google Gemini (`gemini-2.5-flash`, `gemini-2.5-pro`), OpenAI (`gpt-4o`, `gpt-4o-mini`), and Anthropic Claude (`claude-3-5-sonnet`, `claude-3-5-haiku`).
+- **Free Developer Tier Ready**: Built-in native integration for Groq's high-speed free developer tier API.
 - **Real-Time Streaming**: High-throughput Server-Sent Events (SSE) streaming with cancellation and retry support.
 - **Provider Redundancy**: Gracefully reports provider key availability with zero application crashes.
 
@@ -159,6 +160,9 @@ INITIAL_ADMIN_PASSWORD=Admin@123456
 GEMINI_API_KEY=your_gemini_api_key_here
 OPENAI_API_KEY=your_openai_api_key_here
 ANTHROPIC_API_KEY=your_anthropic_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
+GROQ_BASE_URL=https://api.groq.com/openai/v1
+GROQ_MODEL=llama-3.3-70b-versatile
 ```
 
 ### 3. Build & Run Locally
@@ -204,9 +208,12 @@ This repository includes a pre-configured `render.yaml` blueprint for one-click 
 4. Render will read `render.yaml` and configure the web service automatically.
 5. In the Render service settings, configure your environment variables:
    - `MONGODB_URI`: Your MongoDB Atlas cluster connection string.
-   - `GEMINI_API_KEY`: Google Gemini API key.
-   - `OPENAI_API_KEY`: OpenAI API key.
-   - `ANTHROPIC_API_KEY`: Anthropic Claude API key.
+   - `GROQ_API_KEY`: Groq API key from https://console.groq.com/keys (Recommended free provider).
+   - `GROQ_BASE_URL`: `https://api.groq.com/openai/v1`
+   - `GROQ_MODEL`: `llama-3.3-70b-versatile`
+   - `GEMINI_API_KEY`: Google Gemini API key (optional).
+   - `OPENAI_API_KEY`: OpenAI API key (optional).
+   - `ANTHROPIC_API_KEY`: Anthropic Claude API key (optional).
    - `INITIAL_ADMIN_PASSWORD`: Secure password for initial admin seed account.
 6. Trigger manual deploy. Once built, your UMNY AI platform will be live with full SSL and zero CORS issues!
 

@@ -25,6 +25,7 @@ const adminController = {
           google: logs.filter((l) => l.provider === 'google').length,
           openai: logs.filter((l) => l.provider === 'openai').length,
           anthropic: logs.filter((l) => l.provider === 'anthropic').length,
+          groq: logs.filter((l) => l.provider === 'groq').length,
         };
 
         return res.json({
@@ -42,7 +43,7 @@ const adminController = {
         totalConversations: 0,
         totalMessages: 0,
         totalTokens: 0,
-        providerStats: { google: 0, openai: 0, anthropic: 0 },
+        providerStats: { google: 0, openai: 0, anthropic: 0, groq: 0 },
       });
     } catch (err) {
       next(err);
